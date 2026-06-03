@@ -2,7 +2,7 @@
   "name": "The City of Kings – Compañero",
   "short_name": "City of Kings",
   "description": "Selector de escenarios y habilidades de héroes para The City of Kings",
-  "start_url": "./citykings_v4.html",
+  "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#0d0b08",
   "theme_color": "#8B6914",
