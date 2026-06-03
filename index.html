@@ -1,0 +1,1057 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#8B6914">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="City of Kings">
+<title>The City of Kings — Selector de Escenarios</title>
+<link rel="manifest" href="manifest.json">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --parch:#F5E6C8;--parch2:#EDD9A3;--parch3:#D4B97A;
+  --ink:#1A0E05;--ink2:#2D1A08;--ink3:#3D2510;
+  --red:#8B1A1A;--red-l:#C04040;
+  --gold:#8B6914;--gold-l:#C9A227;--gold-ll:#F0C040;
+  --blue:#1A2E5A;--blue-l:#2E4F8C;
+  --shadow:rgba(26,14,5,.6);
+  --r:4px;
+}
+html{scroll-behavior:smooth;}
+body{background:var(--ink);color:var(--parch);font-family:'IM Fell English',serif;font-weight:400;min-height:100vh;overflow-x:hidden;}
+body::before{content:'';position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.05;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='5' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)'/%3E%3C/svg%3E");}
+
+/* HEADER */
+.hdr{position:relative;z-index:10;text-align:center;padding:2.5rem 1rem 1.5rem;background:linear-gradient(180deg,#0A0603 0%,transparent 100%);border-bottom:2px solid var(--gold);}
+.hdr::after{content:'';position:absolute;bottom:-6px;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--gold-ll),transparent);}
+.hdr-crown{font-size:36px;display:block;margin-bottom:.5rem;filter:drop-shadow(0 0 12px var(--gold-l));}
+.hdr h1{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(18px,5vw,32px);color:var(--gold-ll);letter-spacing:.12em;text-shadow:0 0 20px rgba(200,162,39,.4),2px 2px 0 var(--ink);line-height:1.2;}
+.hdr-sub{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.25em;text-transform:uppercase;color:var(--parch3);margin-top:.5rem;}
+
+/* TABS */
+.tabs{display:flex;justify-content:center;background:var(--ink2);border-bottom:1px solid var(--gold);position:sticky;top:0;z-index:100;}
+.tab{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:12px 18px;border:none;background:none;color:var(--parch3);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;white-space:nowrap;}
+.tab:hover{color:var(--gold-l);}
+.tab.active{color:var(--gold-ll);border-bottom-color:var(--gold-ll);}
+
+/* MAIN */
+.main{position:relative;z-index:1;max-width:860px;margin:0 auto;padding:1.5rem 1rem 4rem;}
+
+/* GROUP LABEL */
+.group-label{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin:1.5rem 0 .75rem;display:flex;align-items:center;gap:10px;}
+.group-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(139,105,20,.5),transparent);}
+
+/* MISSION GRID */
+.mission-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:10px;margin-bottom:.5rem;}
+
+/* MISSION CARD */
+.mission-card{background:linear-gradient(135deg,var(--ink2),var(--ink3));border:1px solid var(--gold);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all .22s;position:relative;overflow:hidden;}
+.mission-card:hover{border-color:var(--gold-ll);transform:translateY(-2px);box-shadow:0 6px 20px var(--shadow);}
+.mission-card.active{border-color:var(--gold-ll);background:linear-gradient(135deg,#2D1A08,#3D2510);box-shadow:0 0 0 1px var(--gold-l);}
+.mc-num{font-family:'Cinzel',serif;font-size:10px;color:var(--gold);margin-bottom:4px;}
+.mc-tag{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.2em;text-transform:uppercase;padding:2px 8px;border-radius:20px;border:1px solid;margin-bottom:6px;display:inline-block;}
+.tag-fight{color:var(--red-l);border-color:rgba(192,64,64,.4);background:rgba(139,26,26,.2);}
+.tag-build{color:#8BC34A;border-color:rgba(139,195,74,.4);background:rgba(45,107,45,.2);}
+.tag-gather{color:#FFC107;border-color:rgba(255,193,7,.4);background:rgba(139,105,20,.2);}
+.tag-save{color:#4FC3F7;border-color:rgba(79,195,247,.4);background:rgba(30,79,140,.2);}
+.tag-deliver{color:#FFAB40;border-color:rgba(255,171,64,.4);background:rgba(139,74,14,.2);}
+.tag-extended{color:var(--gold-ll);border-color:rgba(240,192,64,.4);background:rgba(139,105,20,.2);}
+.tag-seasonal{color:#80DEEA;border-color:rgba(128,222,234,.4);background:rgba(26,46,90,.2);}
+.mc-title{font-family:'Cinzel',serif;font-weight:400;font-size:12px;color:var(--parch);line-height:1.3;margin-bottom:5px;}
+.mc-difficulty{font-size:11px;color:var(--parch3);font-style:italic;}
+
+/* MISSION DETAIL */
+.mission-detail{background:linear-gradient(180deg,var(--ink2),#1A0E05);border:1px solid var(--gold);border-radius:var(--r);overflow:hidden;animation:fadeIn .35s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+.md-header{background:linear-gradient(135deg,var(--ink3),var(--ink2));padding:1.25rem 1.5rem;border-bottom:1px solid var(--gold);}
+.md-type-badge{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.2em;text-transform:uppercase;padding:2px 10px;border-radius:2px;border:1px solid;margin-bottom:7px;display:inline-block;}
+.md-num{font-family:'Cinzel',serif;font-size:11px;color:var(--parch3);margin-bottom:4px;}
+.md-title{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(15px,3.5vw,21px);color:var(--gold-ll);text-shadow:0 0 12px rgba(200,162,39,.25);line-height:1.2;margin-bottom:5px;}
+.md-diff{font-family:'Cinzel',serif;font-size:11px;color:var(--parch3);letter-spacing:.08em;}
+
+/* AUDIO CONTROLS */
+.audio-controls{display:flex;gap:8px;flex-wrap:wrap;padding:1rem 1.5rem;border-bottom:1px solid rgba(139,105,20,.25);background:rgba(10,6,3,.4);}
+.audio-btn{display:inline-flex;align-items:center;gap:6px;font-family:'Cinzel',serif;font-size:9px;letter-spacing:.1em;text-transform:uppercase;padding:7px 14px;border-radius:2px;border:1px solid var(--gold);background:rgba(139,105,20,.12);color:var(--gold-l);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.audio-btn:hover{background:rgba(139,105,20,.25);color:var(--gold-ll);}
+.audio-btn.reading{background:rgba(139,26,26,.3);border-color:var(--red-l);color:#F48080;}
+
+/* MUSIC ROW */
+.music-row{padding:.75rem 1.5rem;border-bottom:1px solid rgba(139,105,20,.2);background:rgba(10,6,3,.25);}
+.music-input{font-family:'IM Fell English',serif;font-size:12px;flex:1;min-width:180px;padding:7px 10px;background:rgba(10,6,3,.6);border:1px solid rgba(139,105,20,.4);border-radius:2px;color:var(--parch);outline:none;}
+.music-input:focus{border-color:var(--gold-l);}
+.music-input::placeholder{color:var(--parch3);font-style:italic;}
+.music-btn{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:6px 11px;border-radius:2px;border:1px solid rgba(139,105,20,.4);background:transparent;color:var(--parch3);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.music-btn:hover{border-color:var(--gold);color:var(--gold-l);}
+
+/* SECTION LABEL */
+.section-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);margin-bottom:.9rem;display:flex;align-items:center;gap:8px;}
+.section-label::after{content:'';flex:1;height:1px;background:linear-gradient(90deg,rgba(139,105,20,.5),transparent);}
+
+/* STORY */
+.story-section{padding:1.4rem 1.5rem;border-bottom:1px solid rgba(139,105,20,.22);}
+.story-text{font-family:'IM Fell English',serif;font-weight:400;font-size:15px;line-height:1.82;color:var(--parch);}
+.story-text p{margin-bottom:.75rem;}
+.story-text .dialogue{color:var(--parch2);padding-left:.6rem;border-left:2px solid rgba(139,105,20,.35);margin:.35rem 0;}
+
+/* OBJECTIVE */
+.objective-box{margin:1.25rem 1.5rem;padding:.9rem 1.1rem;background:linear-gradient(135deg,rgba(139,26,26,.18),rgba(10,6,3,.4));border:1px solid rgba(192,64,64,.35);border-radius:var(--r);}
+.obj-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:var(--red-l);margin-bottom:.4rem;}
+.obj-text{font-size:13px;color:var(--parch);line-height:1.65;}
+
+/* SETUP */
+.setup-section{padding:1.25rem 1.5rem;border-bottom:1px solid rgba(139,105,20,.22);}
+.setup-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+@media(max-width:500px){.setup-grid{grid-template-columns:1fr;}}
+.setup-block{background:rgba(10,6,3,.4);border:1px solid rgba(139,105,20,.28);border-radius:var(--r);padding:10px 12px;}
+.setup-block-title{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.12em;text-transform:uppercase;color:var(--gold);margin-bottom:7px;}
+.tracker-table{width:100%;border-collapse:collapse;font-size:11px;}
+.tracker-table th{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;color:var(--parch3);padding:4px;text-align:center;border-bottom:1px solid rgba(139,105,20,.25);}
+.tracker-table td{padding:4px 6px;text-align:center;color:var(--parch);font-size:12px;}
+.tracker-table tr:nth-child(odd) td{background:rgba(139,105,20,.06);}
+.stat-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:5px;font-size:12px;}
+.stat-label{color:var(--parch3);}
+.stat-val{font-family:'Cinzel',serif;color:var(--gold-ll);background:rgba(139,105,20,.18);padding:2px 8px;border-radius:2px;font-size:11px;}
+.board-list{list-style:none;font-size:12px;}
+.board-list li{padding:5px 0;border-bottom:1px solid rgba(139,105,20,.13);color:var(--parch);display:flex;gap:8px;align-items:baseline;}
+.board-list .li-letter{font-family:'Cinzel',serif;color:var(--gold);font-size:10px;min-width:16px;}
+
+/* RULES */
+.rules-card{margin:0 1.5rem 1.4rem;padding:.9rem 1.1rem;background:linear-gradient(135deg,rgba(26,46,90,.28),rgba(10,6,3,.4));border:1px solid rgba(79,195,247,.18);border-radius:var(--r);}
+.rules-label{font-family:'Cinzel',serif;font-size:9px;letter-spacing:.18em;text-transform:uppercase;color:#4FC3F7;margin-bottom:.4rem;}
+.rules-text{font-size:12px;color:var(--parch2);line-height:1.72;}
+
+/* WARNING */
+.warning-box{margin:0 1.5rem 1.25rem;padding:.7rem 1rem;background:rgba(139,105,20,.13);border:1px solid rgba(200,162,39,.25);border-radius:var(--r);font-size:12px;color:var(--parch3);font-style:italic;}
+
+.ornament{text-align:center;color:var(--gold);font-size:18px;margin:.75rem 0;opacity:.55;}
+
+/* EMPTY */
+.empty-state{text-align:center;padding:4rem 1rem;color:var(--parch3);}
+.empty-state .crown{font-size:48px;margin-bottom:1rem;opacity:.3;}
+.empty-state p{font-family:'IM Fell English',serif;font-size:15px;font-style:italic;}
+
+/* TOAST */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink2);border:1px solid var(--gold);border-radius:var(--r);padding:9px 18px;font-family:'Cinzel',serif;font-size:10px;color:var(--gold-ll);z-index:300;opacity:0;transition:opacity .25s,transform .25s;pointer-events:none;white-space:nowrap;box-shadow:0 6px 20px var(--shadow);}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--ink);}
+::-webkit-scrollbar-thumb{background:var(--gold);border-radius:3px;}
+
+/* HEROES */
+.hero-selector{display:flex;flex-wrap:wrap;gap:8px;padding:1.25rem 0 1rem;}
+.hero-btn{font-family:'Cinzel',serif;font-size:10px;letter-spacing:.12em;text-transform:uppercase;padding:9px 16px;border-radius:var(--r);border:1px solid var(--gold);background:rgba(139,105,20,.1);color:var(--parch3);cursor:pointer;transition:all .2s;white-space:nowrap;}
+.hero-btn:hover{background:rgba(139,105,20,.22);color:var(--gold-l);}
+.hero-btn.active{background:linear-gradient(135deg,rgba(139,105,20,.35),rgba(200,162,39,.18));border-color:var(--gold-ll);color:var(--gold-ll);box-shadow:0 0 10px rgba(200,162,39,.2);}
+.hero-title{font-family:'Cinzel Decorative',serif;font-weight:400;font-size:clamp(16px,4vw,24px);color:var(--gold-ll);text-shadow:0 0 14px rgba(200,162,39,.3);margin-bottom:.2rem;}
+.hero-subtitle{font-family:'Cinzel',serif;font-size:11px;letter-spacing:.15em;text-transform:uppercase;color:var(--parch3);margin-bottom:1.25rem;}
+.skills-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px;}
+.skill-card{background:linear-gradient(135deg,var(--ink2),var(--ink3));border:1px solid rgba(139,105,20,.4);border-radius:var(--r);padding:12px 14px;position:relative;transition:border-color .2s;}
+.skill-card:hover{border-color:var(--gold);}
+.tier-badge{position:absolute;top:8px;right:8px;font-family:'Cinzel',serif;font-size:8px;letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:10px;}
+.tier-1{background:rgba(79,195,247,.12);border:1px solid rgba(79,195,247,.3);color:#4FC3F7;}
+.tier-2{background:rgba(139,105,20,.15);border:1px solid rgba(200,162,39,.35);color:var(--gold-l);}
+.tier-3{background:rgba(139,26,26,.18);border:1px solid rgba(192,64,64,.35);color:var(--red-l);}
+.skill-name{font-family:'Cinzel',serif;font-size:12px;font-weight:600;color:var(--parch);margin-bottom:5px;padding-right:52px;line-height:1.3;}
+.skill-type{font-family:'Cinzel',serif;font-size:8px;letter-spacing:.15em;text-transform:uppercase;padding:2px 8px;border-radius:2px;border:1px solid;display:inline-block;margin-bottom:7px;}
+.skill-type.passive{color:#80DEEA;border-color:rgba(128,222,234,.3);background:rgba(26,46,90,.2);}
+.skill-type.special{color:var(--gold-l);border-color:rgba(139,105,20,.35);background:rgba(139,105,20,.1);}
+.skill-type.attack{color:var(--red-l);border-color:rgba(192,64,64,.35);background:rgba(139,26,26,.15);}
+.skill-type.heal{color:#8BC34A;border-color:rgba(139,195,74,.35);background:rgba(45,107,45,.15);}
+.skill-type.interact{color:#FFAB40;border-color:rgba(255,171,64,.35);background:rgba(139,74,14,.15);}
+.skill-type.move{color:#CE93D8;border-color:rgba(206,147,216,.35);background:rgba(74,20,140,.15);}
+.skill-desc{font-family:'IM Fell English',serif;font-size:12.5px;line-height:1.7;color:var(--parch2);}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <span class="hdr-crown">♔</span>
+  <h1>The City of Kings</h1>
+  <div class="hdr-sub">Selector de Escenarios</div>
+</header>
+
+<nav class="tabs">
+  <button class="tab active" data-tab="missions">⚔ Misiones</button>
+  <button class="tab" data-tab="heroes">🧙 Héroes</button>
+</nav>
+
+<div class="main">
+  <div id="tab-missions">
+    <div id="mission-grid"></div>
+    <div id="mission-detail" style="margin-top:1.5rem;"></div>
+  </div>
+  <div id="tab-heroes" style="display:none;">
+    <div id="hero-selector" class="hero-selector"></div>
+    <div id="hero-detail"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const MISSIONS = [
+  // ── EXTENDED ──────────────────────────────────────────────
+  {
+    id:'fools-campaign', group:'extended', num:null,
+    title:"La Campaña del Necio", titleEn:"A Fool's Campaign",
+    difficulty:'Difícil', difficultyColor:'#C04040', missionType:'Combate',
+    story:`Brutius el Roto mira desde uno de los torreones de vigía sobre las puertas de la ciudad, y lo que ve no le agrada.
+
+"¡Lo recuperaremos!" vocifera el Lord Matthias Durance ante las masas de sombríos soldados de la Casa Durance. Durante la última semana, el noble humano ha estado alborotando a su gente para retomar su hogar ancestral del Bastión Gris, perdido ante los monstruos marinos de Vesh. Pero está lejos, y el viaje hasta ese peñasco en lo alto del acantilado será tan peligroso como reconquistar la ciudadela misma.
+
+"Los necios se matarán," gruñe Brutius. "Y perderemos a la mitad de nuestros mejores caballeros humanos."
+
+Pero el tiempo de negociaciones y de aplacar al joven fanático Matthias ha pasado.
+
+"Es un necio, pero tiene razón en una cosa," concuerda Thralir, siempre el más cercano aliado de guerra de Brutius. "La gente de la ciudad necesita una victoria. Quizás sea hora de intentar algo grande."
+
+Con un gruñido de palabras ásperas, el alto príncipe de los humanos se ciñe la espada. "No dejaré que ese necio lidere la campaña, al menos."`,
+    setup:`Descarta las Creature Stat Bars 5, 7, 9, 11, 13 y 15.`,
+    objective:`Explora todos los hexágonos del mapa en los Eternal Kingdoms y el Blue Ascent, y derrota a todas las criaturas visibles.`,
+    trackers:[{hope:'9',time:'Midnight',morale:'2'},{hope:'8',time:'Late Morning',morale:'3'},{hope:'7',time:'Afternoon',morale:'3'}],
+    stats:{xp:1,csb:2,stats:1,equipment:0,skills:0},
+    board:[
+      {letter:'a',text:'Moat'},
+      {letter:'b',text:'Moat'},
+    ],
+    tiles:'All',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    warning:'Este escenario puede durar entre 6 y 12 horas de juego.',
+  },
+  // ── SCENARIOS 1–10 ────────────────────────────────────────
+  {
+    id:'poisons-of-vesh', group:'scenario', num:1,
+    title:'Los Venenos de Vesh', titleEn:'The Poisons of Vesh',
+    difficulty:'Difícil', difficultyColor:'#C04040', missionType:'Combate',
+    story:`En las almenas de la Ciudad, un pájaro pequeño y parduzco aletea y aterriza, exhausto. Apenas puede mantener los ojos abiertos, y alrededor de su pata lleva atado un diminuto estuche de pergamino de plata.
+
+"Los Reyezuelos de Melian son elegidos por su vuelo veloz y sus costumbres sigilosas," arrulla la reina élfica mientras alaba al diminuto animal, sosteniéndolo entre sus manos. "Pero trae noticias aciagas..."
+
+A su lado están los otros héroes, mirando maravillados al mensajero más pequeño —todos salvo Sesharra, que se relame los labios—. "Hay una fuerza moviéndose junto al Melian Forest, una tropa de monstruos de Vesh, arrastrando tras de sí los calderos de inmundicia ardiente que usan para contaminar la tierra..."
+
+"Algún veneno nuevo de Vesh," murmura Calamis con asco. "La Mano Oscura busca hacer el mundo inhabitable para todos salvo sus criaturas."
+
+"Y pueden usar la Old Stone Road," el único ojo bueno de Brutius escrutó el horizonte. "Una antigua y recta calzada que podría llevarlos directamente a través del Blue Ascent, más allá del Melian, y hasta aquí. Tenemos que detenerlos antes de que lleguen."
+
+"Y detener su quema del mundo," dice la reina élfica con tristeza.`,
+    setup:'',
+    objective:'Derrota 4 criaturas.',
+    trackers:[{hope:'2',time:'Early Hours',morale:'2'},{hope:'2',time:'Late Morning',morale:'3'},{hope:'2',time:'Midday',morale:'3'}],
+    stats:{xp:5,csb:6,stats:2,equipment:5,skills:4},
+    board:[
+      {letter:'a',text:'Cripplewood Ravines con Stat Bar 4 — Hexágonos 1, 2, 3'},
+      {letter:'b',text:'Melian Forest con Stat Bar 3'},
+      {letter:'c',text:"T'Lokk's Cave con Stat Bar 5"},
+    ],
+    tiles:'1, 2, 3',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+  },
+  {
+    id:'different-time', group:'scenario', num:2,
+    title:'Perteneciente a Otro Tiempo', titleEn:'Belonging to a Different Time',
+    difficulty:'Difícil', difficultyColor:'#C04040', missionType:'Construcción',
+    story:`El Anciano del Bosque pasea por los patios y corredores de la ciudad.
+
+En los Jardines de la Vadora, la gran bestia semejante a una montaña de pelaje oscuro está sentada, bufando ante los extraños artefactos y plantas que no crecen en ningún otro lugar. Algo se agita en su corazón ancestral, pero incluso a uno tan viejo como él le resulta difícil ponerlo en palabras. El Anciano se siente perdido, incluso en este espacio sagrado.
+
+Un paso ligero sobre la grava aplastada de los caminos. ¿Cómo pudo dejar que otro se acercara tanto? Levantando la vista, ve que es V'Sheel, Gran Sacerdotisa de la Vadora, ella misma casi ciega. "A mí también me llaman vieja, ¿lo creéis?" V'Sheel descansa sus cansados huesos junto al gran oso. "Pero no tan vieja como vos, creo."
+
+Una brisa suave impregna el jardín, trayendo consigo el olor a lluvia. "Es duro pertenecer a otro tiempo. No saber quién eres. Si deseas encontrar la paz de nuevo, viejo amigo, debes buscar respuestas. ¿Dónde naciste? ¿Dónde encontraste la esencia Caída que te hizo lo que eres? ¿Recuerdas siquiera estas cosas?"
+
+"Acepta el consejo de una cosa vieja a otra: comienza tu búsqueda en los Sacred Sanctuaries y sigue tu instinto."`,
+    setup:'Usa la Temporary Rules Card 001.',
+    objective:"Construye el Hidden Sun Sanctuary y el Eastern Wind House hasta la Fase 3, y explora todos los hexágonos del Blue Ascent.",
+    trackers:[{hope:'2',time:'Midnight',morale:'2'},{hope:'2',time:'Early Hours',morale:'3'},{hope:'2',time:'Midday',morale:'3'}],
+    stats:{xp:5,csb:4,stats:4,equipment:5,skills:4},
+    board:[
+      {letter:'a',text:'Hidden Sun Sanctuary — Hexágonos 1, 2, 3, 7, 12, 15'},
+      {letter:'b',text:'Sterncastle Meadow'},
+      {letter:'c',text:'Boswitch Farmlands'},
+      {letter:'d',text:'Eastern Wind House'},
+    ],
+    tiles:'1, 2, 3, 7, 12, 15',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    rules:{title:'Temporary Rules Card 001',text:'Cada vez que derrotes a una criatura, coloca 3 Recursos en el hexágono del mapa donde murió. Añade 1 Recurso por cada ★, 2 por cada ★★ y 3 por cada ★★★ que tuviera la criatura.\n\nSi un Trabajador está en un hexágono con al menos 1 Recurso, puede realizar una acción de Trabajar para recoger un número de Recursos igual a su nivel de Scavenge.'},
+  },
+  {
+    id:'mistaken-identity', group:'scenario', num:3,
+    title:'Error de Identidad', titleEn:'Mistaken Identity',
+    difficulty:'Muy Difícil', difficultyColor:'#FF6060', missionType:'Combate',
+    story:`En una tormenta de cascos entrechocando y trompetas resonando, los exploradores élficos de la Casa Ellion han regresado a la ciudad, pero traen consigo un macabro trofeo.
+
+"Esto prueba lo que llevamos tiempo sospechando," escupe el capitán de los Rangers Ellion mientras sus compañeros depositan reverentemente el cuerpo de uno de los suyos, envuelto en las sagradas hojas plateado-grises del Árbol Baonan. "Ese era mi pariente Pymar, y ha sido atacado por una bestia tan grande que me negaría a creerlo." Los ojos agudos del élfico buscan al que parece más incómodo en la Cámara del Consejo: el Anciano del Bosque.
+
+"Llevamos un tiempo sospechando que había otras criaturas tan feroces como Kuma viviendo en los bosques. No podíamos creer que uno tan gentil pudiera ser tan salvaje, pero ahora que Pymar ha sido atacado, y con el Anciano a salvo aquí en estos salones, ha quedado confirmado." El capitán élfico está indignado.
+
+Siempre hubo historias sobre la terrible furia de Kuma. Ahora todos conocen al verdadero culpable: tiene que haber otros monstruos que acechan los bosques profundos.
+
+El Anciano del Bosque se levanta, olfatea, e inclina su ancestral cabeza antes de dirigirse hacia la puerta. Si alguien puede rastrear y detener este mal, será él.`,
+    setup:'Usa la Temporary Rules Card 002.',
+    objective:'Derrota a todas las criaturas visibles.',
+    trackers:[{hope:'3',time:'Midday',morale:'2'},{hope:'3',time:'Afternoon',morale:'3'},{hope:'2',time:'Midnight',morale:'3'}],
+    stats:{xp:20,csb:10,stats:8,equipment:5,skills:5},
+    board:[
+      {letter:'a',text:'Moon Lake — Hexágonos 1, 3, 6, 10'},
+      {letter:'b',text:'Oak Forest'},
+      {letter:'c',text:"Herald's Gate"},
+    ],
+    tiles:'1, 3, 6, 10',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    rules:{title:'Temporary Rules Card 002',text:'Cada vez que derrotes a una criatura o jefe, inmediatamente roba las 2 siguientes Creature Stat Bars.\n\nAdemás de tus recompensas habituales, ganas también los PX mostrados en las 2 Stat Bars que acabas de coger. Una vez ganados los PX, descarta ambas Stat Bars.'},
+  },
+  {
+    id:'grave-of-my-fathers', group:'scenario', num:4,
+    title:'La Tumba de Mis Antepasados', titleEn:'Grave of My Fathers',
+    difficulty:'Difícil', difficultyColor:'#C04040', missionType:'Combate',
+    story:`En las salas de la ciudad cedidas a los elfos, el alto príncipe humano trabaja en silencio en un pequeño rincón con altas ventanas arqueadas.
+
+Aquí reina la calma, y una ventana deja entrar la luz del sol del mediodía. Una figura le observa desde el umbral; el rostro de la Reina Gris Vyliria es impasible mientras ve al humano colocar cuidadosamente una vieja vaina de cuero, incrustada de rubíes, en una caja de caoba. La espada ha desaparecido, pero parece que la vaina tuvo mucho uso a juzgar por los golpes y muescas en su superficie.
+
+"Sé que estás ahí," susurra Brutius sin darse la vuelta. "No pretendía molestar a tu gente."
+
+"No lo has hecho. Entiendo por qué te gusta este lugar. Es tranquilo. Contemplativo."
+
+Un brusco asentimiento de Brutius. "Esta vaina es todo lo que me queda de mi padre, el Gran Rey Augustus. Hoy sería el día en que cayó ante Vesh."
+
+"Hemos perdido a tantos," dice Vyliria con sencillez.
+
+"Uno de mis mayores pesares es que perdimos su estandarte al intentar defender la Ravenswood Village. Si pudiera, volvería a recuperarlo."
+
+"Entonces te ayudaré, humano," decide la Reina Gris. Ella conoce la importancia de la tierra sagrada.`,
+    setup:'Usa la Temporary Rules Card 002.',
+    objective:'Derrota 5 criaturas y viaja a la Ravenswood Village; al menos 1 héroe debe estar en el hexágono cuando el escenario se resuelva.',
+    trackers:[{hope:'2',time:'Midnight',morale:'2'},{hope:'2',time:'Late Morning',morale:'3'},{hope:'2',time:'Midday',morale:'3'}],
+    stats:{xp:5,csb:3,stats:2,equipment:8,skills:4},
+    board:[
+      {letter:'a',text:'Giant Foot Peak — Hexágonos 2, 3, 4, 5, 8, 9, 11, 15'},
+      {letter:'b',text:'Moat'},
+      {letter:'c',text:'Moat'},
+      {letter:'d',text:"Dragon's Crest"},
+    ],
+    tiles:'2, 3, 4, 5, 8, 9, 11, 15',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    rules:{title:'Temporary Rules Card 002',text:'Cada vez que derrotes a una criatura o jefe, inmediatamente roba las 2 siguientes Creature Stat Bars.\n\nAdemás de tus recompensas habituales, ganas también los PX mostrados en las 2 Stat Bars que acabas de coger. Una vez ganados los PX, descarta ambas Stat Bars.'},
+  },
+  {
+    id:'legacy-mad-yeppic', group:'scenario', num:5,
+    title:'El Legado del Loco Yeppic', titleEn:'The Legacy of Mad Yeppic',
+    difficulty:'Difícil', difficultyColor:'#C04040', missionType:'Combate',
+    story:`Rebuscando en el campo de batalla más reciente frente a la Ciudad de los Reyes, Thralir llama a los Tinkerers para inspeccionar un trozo particular de escombros.
+
+"¿Qué os parece esto, rocillas?" El enano usa el término cariñoso que los enanos tienen para los Deep Tinkerers. "El enemigo no tuvo oportunidad de erigirlo, pero me temo que podría ser algún arma nueva." Rapuil empuja las vigas de madera desplomadas y los soportes metálicos, y pone cara de asco. "Moco de orco," se estremece.
+
+"Sí, pero ese es un diseño de Tinkerer," frunce el ceño profundamente Neoba. "Lo he visto en un Learning Tunnel... ¿pero qué era? ¿Recuerdas al Loco Yeppic?" le pregunta a su hermana.
+
+"¡Por las rocas, espero que no me estés diciendo que Boskel ha encontrado los Learnings de Yeppic!" respira Rapuil, mientras el rey enano mira de uno a otro confuso hasta que Neoba le saca de su miseria.
+
+"El Loco Yeppic era nuestro Battle Master. Fabricó todos los dispositivos que usábamos contra las Giant Slugs y demás. Estoy seguro de que esto es uno de sus Advanced Ballista Designs, pero modificado por los Orcos. Si Vesh está desplegando estos en los campos de batalla, ¡necesitamos encontrarlos todos y detenerlos!"`,
+    setup:'Usa la Temporary Rules Card 002.',
+    objective:'Explora todos los hexágonos del mapa en los Eternal Kingdoms y el Blue Ascent, y derrota a todas las criaturas visibles.',
+    trackers:[{hope:'3',time:'Late Morning',morale:'2'},{hope:'3',time:'Afternoon',morale:'3'},{hope:'2',time:'Midnight',morale:'3'}],
+    stats:{xp:20,csb:6,stats:10,equipment:5,skills:6},
+    board:[
+      {letter:'a',text:'Moon Lake — Hexágonos 1, 2, 6, 10'},
+      {letter:'b',text:'Still Sea'},
+      {letter:'c',text:'Moat'},
+      {letter:'d',text:'The Scarred Hand con 1 Phoenix (cubo rojo) en ella'},
+      {letter:'e',text:'Sterncastle Meadow'},
+    ],
+    tiles:'1, 2, 6, 10',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    rules:{title:'Temporary Rules Card 002',text:'Cada vez que derrotes a una criatura o jefe, inmediatamente roba las 2 siguientes Creature Stat Bars.\n\nAdemás de tus recompensas habituales, ganas también los PX mostrados en las 2 Stat Bars que acabas de coger. Una vez ganados los PX, descarta ambas Stat Bars.'},
+  },
+  {
+    id:'rare-commodities', group:'scenario', num:6,
+    title:'Mercancías Raras', titleEn:'Rare Commodities',
+    difficulty:'Difícil', difficultyColor:'#C04040', missionType:'Recolección',
+    story:`Cada siete días, los atestados residentes de la ciudad tienen permitido un mercado apretujado entre las Outer Walls y los Old Granaries. Pero hoy, el mercado está lleno de gritos.
+
+"¡¿De dónde has sacado esto!?" ruge el Storm Tree, con vides crujiendo y animales siseando mientras se alza a su plena altura para dominar al desventurado mercader de la Black Feather. En las poderosas manos del Levantado hay un pequeño frasco de ceniza negra, que parece igual que cualquier hollín de una estufa.
+
+"Es un... ¿era un regalo?" suda el pequeño humano.
+
+"Pasé una temporada quitándome estorninos del pelo... ¡no te atrevas a engañarme, humano!" El Storm Tree está furioso, y para probarlo, saca el tapón de corcho y espolvorea un pellizco del precioso hollín en el suelo, donde al instante arde en un destello de fuego.
+
+"Cenizas de Phoenix. Que solo pueden venir de las plumas de un Phoenix moribundo... ¡uno de los pájaros más raros de todas las tierras!"
+
+"Hay un hombre en The Scarred Hand. Las vende. Arranca las plumas y las deja arder por buena moneda," chilla el humano.
+
+"Nos llevarás con ese hombre, ¡y liberaremos a ese pobre pájaro antes de que pierda hasta la última de sus plumas!"`,
+    setup:'Usa la Temporary Rules Card 003.',
+    objective:'Lleva 50 recursos al Old Granary, y lleva el Phoenix a The City of Kings.',
+    trackers:[{hope:'2',time:'Midnight',morale:'2'},{hope:'2',time:'Early Hours',morale:'3'},{hope:'2',time:'Midday',morale:'3'}],
+    stats:{xp:6,csb:6,stats:6,equipment:5,skills:6},
+    board:[
+      {letter:'a',text:'Moat — Hexágonos 1, 2, 3, 10, 15'},
+      {letter:'b',text:'Melian Forest'},
+      {letter:'c',text:'Moat'},
+      {letter:'d',text:'Oak Forest'},
+    ],
+    tiles:'1, 2, 3, 10, 15',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    rules:{title:'Temporary Rules Card 003',text:'Durante la preparación, se colocan ciertos Objetos (cubos rojos) en hexágonos del mapa. Pueden ser recogidos, movidos y entregados por tus Trabajadores.\n\nUn Trabajador en el mismo espacio que un Objeto puede usar una acción Work para recoger 1 Objeto. Cada Objeto ocupa 1 espacio de almacenamiento. También puede usar Work para dejar caer 1 Objeto en su posición actual.'},
+  },
+  {
+    id:'neobas-learnin', group:'scenario', num:7,
+    title:"El Aprendizaje de Neoba", titleEn:"Neoba's Learnin'",
+    difficulty:'Muy Difícil', difficultyColor:'#FF6060', missionType:'Recolección',
+    story:`En la gran Cámara del Consejo, ha llegado el momento de que los recién llegados cuenten su historia. Neoba parece diminuto comparado con esta gran sala. En los bancos de piedra se sientan cortesanos elfos, nobles humanos, jefes enanos y sacerdotes Vadorianos. El pequeño Tinkerer traga saliva nerviosamente.
+
+"No temas, pequeño," ruge una voz casi tan grande como su dueño. Calamis el Sacudidor de Tierras recoge al pequeño Tinkerer con una mano y se adentra lentamente en el centro de la sala. A la aparición del Primero, al instante todo el mundo guarda silencio. "Cuéntales lo que viste."
+
+"Lo sentí en las rocas primero. Un temblor que estaba fuera de lugar. Estaba muy dentro de los Azulite Shards así que empecé a subir hacia la Olembe Hive. Cuanto más subía, más podía ver la corrupción. Había esporas de cueva... nuevas, que nunca había visto antes, envenenando a las otras. Entonces llegué a la Hive y vi lo que había ocurrido. El techo estaba cubierto de estas estalactitas gigantes, goteando su podredumbre sobre los Tinkerers de abajo. Cada Tinkerer que tocaban, se fusionaba con sus máquinas."
+
+"Debemos buscar una cura para estas pobres criaturas." Vyliria se pone en pie. "Si pudiéramos recuperar los árboles de los Elf Springs, quizás sus hojas harían algún bien a tu gente."
+
+Está decidido. Un grupo partirá para intentar descubrir una cura para esta terrible dolencia nacida de Vesh.`,
+    setup:'Usa la Temporary Rules Card 001.',
+    objective:'Lleva 55 recursos al Old Granary.',
+    trackers:[{hope:'2',time:'Early Hours',morale:'2'},{hope:'2',time:'Late Morning',morale:'3'},{hope:'2',time:'Midday',morale:'3'}],
+    stats:{xp:20,csb:12,stats:10,equipment:5,skills:6},
+    board:[
+      {letter:'a',text:'Lost Hope Inn con Stat Bar 10 — Hexágonos 1, 2, 3'},
+      {letter:'b',text:'Sterncastle Meadow'},
+      {letter:'c',text:'Oak Forest con Stat Bar 9'},
+      {letter:'d',text:'Melian Forest con Stat Bar 11'},
+    ],
+    tiles:'1, 2, 3',
+    start:{heroes:'The City of Kings',workers:'Lost Hope Inn'},
+    rules:{title:'Temporary Rules Card 001',text:'Cada vez que derrotes a una criatura, coloca 3 Recursos en el hexágono donde murió. Añade 1 Recurso por cada ★, 2 por cada ★★ y 3 por cada ★★★ que tuviera la criatura.\n\nSi un Trabajador está en un hexágono con al menos 1 Recurso, puede realizar una acción Work para recoger tantos Recursos como su nivel de Scavenge.'},
+  },
+  {
+    id:'oops', group:'scenario', num:8,
+    title:'¡Ups!', titleEn:'Oops!',
+    difficulty:'Difícil', difficultyColor:'#C04040', missionType:'Salvamento',
+    story:`Palabras enfadadas, siseos y palmadas pueden oírse salir del laboratorio del Tinkerer.
+
+"¡Por las piedras sagradas... te dije que lo soltaras!" le espeta Neoba a su hermana.
+
+"¡Soy la mayor, y eso significa que tienes que hacerme caso!" le responde Rapuil. Los dos están ocupados en sus laboratorios requisados, donde trozos de metal y roca descansan junto a lámparas de mesa e incienso. Discuten sobre algo que parece una rueda.
+
+"¡No tienes ni idea de qué es siquiera esto!" señala Neoba (con razón).
+
+"¡Como si eso te hubiera detenido alguna vez!" Rapuil tira del objeto, y se oye un fuerte crujido. "Oh." Mira con ojos muy abiertos la mitad que tiene en la mano. "Supongo que no necesitamos mejorar las catapultas humanas ahora mismo... ¿no?"
+
+Neoba mira su mitad de la rueda, luego la puerta, luego de vuelta a su hermana. "Será mejor que lo arreglemos, antes de que Brutius se entere."`,
+    setup:'Usa la Temporary Rules Card 002.',
+    objective:'Lleva 30 recursos al Old Granary.',
+    trackers:[{hope:'2',time:'Early Hours',morale:'2'},{hope:'2',time:'Late Morning',morale:'2'},{hope:'2',time:'Midday',morale:'2'}],
+    stats:{xp:2,csb:3,stats:2,equipment:5,skills:4},
+    board:[
+      {letter:'a',text:"T'Lokk's Cave — Hexágonos 1, 2, 3"},
+      {letter:'b',text:'Cogshead Workings'},
+      {letter:'c',text:'Menash Greenlands'},
+      {letter:'d',text:'Melian Forest con Stat Bar 7 y 6 Eggs (cubos rojos)'},
+      {letter:'e',text:'Moon Lake'},
+    ],
+    tiles:'1, 2, 3',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    rules:{title:'Temporary Rules Card 002',text:'Cada vez que derrotes a una criatura o jefe, inmediatamente roba las 2 siguientes Creature Stat Bars.\n\nAdemás de tus recompensas habituales, ganas también los PX mostrados en las 2 Stat Bars que acabas de coger. Una vez ganados los PX, descarta ambas Stat Bars.'},
+  },
+  {
+    id:'pangaen-civet', group:'scenario', num:9,
+    title:'La Civeta Pangaen', titleEn:'The Pangaen Civet',
+    difficulty:'Difícil', difficultyColor:'#C04040', missionType:'Salvamento',
+    story:`En las almenas de la Ciudad de los Reyes, Calamis se encuentra con el sol como siempre hace, pero en esta ocasión no está solo.
+
+"Puedo ver que este lugar es bueno. Es amplio, es fuerte, ¡pero está tan desnudo!" suspira Yanna en el viento junto al Sacudidor de Tierras, mientras una de sus criaturas hace malabares casualmente de un hombro al otro.
+
+Calamis no dice nada. Su mirada es perfectamente pétrea.
+
+"¡Vamos, Terri!" ríe Yanna, sacudiendo criaturas de sus extremidades. "¿No me vas a hablar después de todas estas generaciones?"
+
+"Te fuiste. Yo me quedé. Observé. Y tú te fuiste." Su voz es como rocas moliéndose.
+
+"¿Y qué? Estas piedras me duelen los pies, Calie. ¡Estos pasillos están tan secos!"
+
+"Los Caídos nos pusieron aquí. Para quedarnos. Y para observar."
+
+"A lo mejor te pusieron aquí para estar quieto y observar... ¡a mí me hicieron para correr y reír!" Yanna hace girar su forma, saltando de contrafuerte en contrafuerte. Pero incluso Yanna ve que el poderoso Sacudidor de Tierras está molesto.
+
+"Te necesitamos aquí, Yanna," murmura entre dientes.
+
+Yanna detiene sus juegos. "De acuerdo. Me quedaré, con una condición. Que me permitas recuperar a mis amigos, la Pangaen Civet del Melian Forest."`,
+    setup:'Usa la Temporary Rules Card 004.',
+    objective:'Derrota a todas las criaturas visibles, y salva al menos 1 Egg.',
+    trackers:[{hope:'3',time:'Midday',morale:'2'},{hope:'3',time:'Afternoon',morale:'3'},{hope:'2',time:'Midnight',morale:'3'}],
+    stats:{xp:5,csb:7,stats:4,equipment:6,skills:4},
+    board:[
+      {letter:'a',text:"T'Lokk's Cave con Stat Bar 5 — Hexágonos 1, 4, 6, 13"},
+      {letter:'b',text:"Rancor Steward's Fort"},
+      {letter:'c',text:'Moat'},
+      {letter:'d',text:'Moat'},
+      {letter:'e',text:'Lost Hope Inn con Stat Bar 4'},
+      {letter:'f',text:'Hyzicki Caravans con Stat Bar 6'},
+      {letter:'g',text:"Herald's Gate"},
+    ],
+    tiles:'1, 4, 6, 13',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    rules:{title:'Temporary Rules Card 004',text:'Durante la preparación, se colocan ciertos Objetos (cubos rojos) en una Creature Template.\n\nCuando una criatura con Objetos se activa e intenta su ataque básico: si no tiene Priority Target, destruirá 1 Objeto. Si tiene Priority Target, ataca normalmente.\n\nAl destruirse el último Objeto de una Creature Template, pierdes la partida inmediatamente.\n\nSi derrotas a una criatura que aún porta Objetos, ¡has salvado esos Objetos!'},
+  },
+  {
+    id:'rock-glue', group:'scenario', num:10,
+    title:'Rock Glue', titleEn:'Rock Glue',
+    difficulty:'Difícil', difficultyColor:'#C04040', missionType:'Combate',
+    story:`En el Trade District, una figura muy pequeña consigue alterar el día de cada mercader, uno por uno.
+
+"No... parece más bien azul, pero se vuelve naranja cuando la calientas, y huele a huevos podridos." Las manos de Rapuil revolotean dramáticamente frente a la cara del mercader humano.
+
+"Eh..." El mercader mira por encima de su hombro por si alguien más puede ayudarle con esta persona tan excitable y pequeña.
+
+"¿La encuentras cuando un Basilisk muere y queda encerrado en arcilla?" Rapuil le mira como si fuera idiota.
+
+"No, lo siento señora, no tengo nada de eso." El mercader retrocede preocupado.
+
+"¡Puede pegar rocas entre sí!" grita Rapuil tras él.
+
+"Rapuil, ¿qué es lo que te tiene tan emocionada?" suspira la Gran Sacerdotisa Vadoriana T'Lorra la Bendita mientras avanza grácilmente entre la multitud.
+
+"Ugh. Es el ingrediente fundamental para cualquier trabajo de Tinkerer. ¡Pero me temo que ahora que Vesh tiene las Hives, controlará todo el suministro y no podremos fabricar nada!"
+
+"Si es tan importante, ¿no estará Vesh ya minándolo?" señala T'Lorra.
+
+"¡Razón de más para detenerle ahora!" dice Rapuil con fiereza.`,
+    setup:'Usa la Temporary Rules Card 005.',
+    objective:'Derrota 6 criaturas.',
+    trackers:[{hope:'3',time:'Midday',morale:'2'},{hope:'3',time:'Afternoon',morale:'3'},{hope:'2',time:'Midnight',morale:'3'}],
+    stats:{xp:5,csb:7,stats:4,equipment:6,skills:4},
+    board:[
+      {letter:'a',text:"T'Lokk's Cave con Stat Bar 5 — Hexágonos 1, 4, 6, 13"},
+      {letter:'b',text:"Rancor Steward's Fort"},
+      {letter:'c',text:'Moat'},
+      {letter:'d',text:'Moat'},
+      {letter:'e',text:'Lost Hope Inn con Stat Bar 4'},
+      {letter:'f',text:'Hyzicki Caravans con Stat Bar 6'},
+      {letter:'g',text:"Herald's Gate"},
+    ],
+    tiles:'1, 4, 6, 13',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    rules:{title:'Temporary Rules Card 005',text:'Cuando derrotes cualquier criatura o jefe, recoge tus recompensas como de costumbre y luego coloca inmediatamente la siguiente Creature Stat Bar.\n\nColoca la Creature Template junto al jugador actual, y el War Banner correspondiente en el hexágono donde fue eliminada la criatura anterior.'},
+  },
+  // ── SEASONAL 1–4 ──────────────────────────────────────────
+  {
+    id:'new-year-new-life', group:'seasonal', num:1,
+    title:'Año Nuevo, Nueva Vida', titleEn:'New Year, New Life',
+    difficulty:'Normal', difficultyColor:'#8BC34A', missionType:'Combate',
+    story:`Las trompetas de la Vadora surcan los cielos sobre la ciudad, y puede oírse un gran revuelo en sus calles.
+
+"¡Preparad los perros!" gruñe Brutius el Roto, su voz tan ronca que casi suena como un ladrido él mismo. Luce espléndido sobre su montura, con cada pieza de armadura pulida y resplandeciente bajo el brillante sol de la mañana. Todavía es temprano, pero hoy es el Cambio de Año Nuevo, y el joven despertó con un aire de optimismo. Cualquier cosa podría ser posible este año. Quizás este año encuentre un ungüento que alivie sus articulaciones doloridas. Quizás este sea el año en que derroten a Vesh.
+
+Frente a Brutius están los últimos perros fieles de la ciudad; algunos entre la jauría eran los perros de caza de los nobles, pero aún más eran perros de granja y compañeros constantes de los refugiados allí. Como ellos, Brutius tiene hambre de un nuevo día y el olor del aire fresco.
+
+"Este año llevaremos la batalla a Vesh," susurra Brutius, y sus palabras son repetidas por los pregoneros de la ciudad. "¡Y empieza ahora!"`,
+    setup:'',
+    objective:'Derrota 4 criaturas.',
+    trackers:[{hope:'2',time:'Early Hours',morale:'2'},{hope:'2',time:'Late Morning',morale:'3'},{hope:'2',time:'Midday',morale:'3'}],
+    stats:{xp:5,csb:4,stats:2,equipment:5,skills:4},
+    board:[
+      {letter:'a',text:"T'Lokk's Cave con Stat Bar 3 — Hexágonos 1, 2, 3, 4, 9"},
+      {letter:'b',text:'Telmarren Forest'},
+      {letter:'c',text:'High Meadows'},
+      {letter:'d',text:'Menash Greenlands'},
+      {letter:'e',text:'Sterncastle Meadow'},
+    ],
+    tiles:'1, 2, 3, 4, 9',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+  },
+  {
+    id:'wintermas', group:'seasonal', num:2,
+    title:'Inviernamas', titleEn:'Wintermas',
+    difficulty:'Muy Difícil', difficultyColor:'#FF6060', missionType:'Salvamento',
+    story:`La nieve cae espesa y pesada, cubriendo los tejados y llenando las habitaciones olvidadas de la ciudad. Las luces brillan desde detrás de los postigos cerrados.
+
+Esta noche es la víspera de Inviernamas, y todo está en calma.
+
+Mañana, los postigos se abrirán de par en par, y a lo largo de los pasillos de la antigua ciudad, los niños despertarán para encontrar regalos cuidadosamente envueltos junto a sus chimeneas. Dado los tiempos oscuros en que se encuentran, los regalos serán cosas sencillas: un juguete de madera hecho a mano, un cuchillo de cinturón, una tarta especiada o una naranja rara, pero incluso aquí todavía puede encontrarse un poco de alegría.
+
+Pero no para todos. Una figura se tambalea bajo sus pesadas mantas de lana, desplomándose contra una vieja puerta de roble mientras la nieve se asienta sobre sus delgados hombros. Las luces estallan, la puerta se abre de golpe, y ahí está nada menos que Brutius el Roto, trabajando hasta tarde en sus planes de guerra.
+
+"¡Llevadle a una cama y dadle comida!" ordena Brutius a sus cortesanos, cargando él mismo con la delgada figura hasta su estudio. "¿Dónde está tu casa? ¿No tienes familia a la que volver?"
+
+"Mi familia nunca salió de Fin del Chubasco," susurra el joven.
+
+Una sombra de dolor cruza el rostro del caudillo. ¿Cuántas personas tienen historias similares? Mientras la luz pasa sobre las cicatrices de su rostro curtido, toma una decisión. Ningún niño despertará mañana sin al menos un poco de alegría.`,
+    setup:'Usa la Temporary Rules Card 004.',
+    objective:'Derrota a todas las criaturas visibles y salva al menos 1 Gift.',
+    trackers:[{hope:'2',time:'Midnight',morale:'2'},{hope:'2',time:'Early Hours',morale:'2'},{hope:'2',time:'Midday',morale:'2'}],
+    stats:{xp:5,csb:7,stats:5,equipment:5,skills:6},
+    board:[
+      {letter:'a',text:'Stat Bar 12 y 8 Gifts (cubos rojos) en ella — Hexágonos 1, 2, 3, 10, 15'},
+    ],
+    tiles:'1, 2, 3, 10, 15',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    rules:{title:'Temporary Rules Card 004',text:'Durante la preparación, se colocan ciertos Objetos (cubos rojos) en una Creature Template.\n\nCuando una criatura con Objetos se activa e intenta su ataque básico: si no tiene Priority Target, destruirá 1 Objeto. Si tiene Priority Target, ataca normalmente.\n\nAl destruirse el último Objeto, pierdes la partida inmediatamente.\n\nSi derrotas a una criatura que aún porta Objetos, ¡has salvado esos Objetos!'},
+  },
+  {
+    id:'grey-queen-nameday', group:'seasonal', num:3,
+    title:"El Día del Nombre de la Reina Gris", titleEn:"The Grey Queen's Name-Day",
+    difficulty:'Difícil', difficultyColor:'#C04040', missionType:'Recolección',
+    story:`En las cámaras de meditación de Vyliria, la reina de los elfos escucha un ruido inesperado.
+
+Los ojos de la Reina Gris se abren de golpe y frunce el ceño ante las cortinas que separan su cámara del pasillo exterior. Más sonidos de pasos apresurados. Será mejor que no sea esa maldita Pangaen Civet entrando en sus aposentos de nuevo... ¡la última vez se comió toda su hierba lunar!
+
+Ve un destello de una de sus propias sacerdotisas élficas desapareciendo por la esquina.
+
+"Están tramando algo," respira Vyliria. Durante las últimas semanas ha entrado en habitaciones para oír conversaciones susurradas que de repente se cortaban.
+
+"¡Bueno. Basta de secretos!" Vyliria irrumpe en la habitación. "¡Qué me estáis ocultando!"
+
+"¡Eep!" Ruidos de sorpresa de sus asistentes, que parecen estar en medio de... ¿haciendo pastel dulce élfico?
+
+"Era todo lo que podíamos rebuscar y encontrar para daros en vuestro cumpleaños, Gran Reina. Sabemos que no es mucho, pero decidnos, ¿qué desearíais, si pudiera encontrarse?"
+
+Vyliria reflexiona un momento. "Las flores del Árbol Baonan."`,
+    setup:'Usa la Temporary Rules Card 003.',
+    objective:'Lleva todas las Flowers a The City of Kings.',
+    trackers:[{hope:'2',time:'Midnight',morale:'2'},{hope:'2',time:'Late Morning',morale:'3'},{hope:'2',time:'Afternoon',morale:'3'}],
+    stats:{xp:3,csb:1,stats:3,equipment:5,skills:3},
+    board:[
+      {letter:'a',text:'Oak Forest con Stat Bar 2 y 1 Flower — Hexágonos 1, 2, 3, 5, 9'},
+      {letter:'b',text:'Wolf Forest con Stat Bar 4 y 2 Flowers'},
+      {letter:'c',text:'Melian Forest con Stat Bar 3 y 1 Flower'},
+    ],
+    tiles:'1, 2, 3, 5, 9',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    rules:{title:'Temporary Rules Card 003',text:'Durante la preparación, se colocan ciertos Objetos (cubos rojos) en hexágonos del mapa. Pueden ser recogidos, movidos y entregados por tus Trabajadores.\n\nUn Trabajador en el mismo espacio que un Objeto puede usar una acción Work para recoger 1 Objeto. También puede usar Work para dejar caer 1 Objeto en su posición actual.'},
+  },
+  {
+    id:'all-hallows-eve', group:'seasonal', num:4,
+    title:'La Noche de Todos los Santos', titleEn:'All Hallows Eve',
+    difficulty:'Difícil', difficultyColor:'#C04040', missionType:'Entrega',
+    story:`Las luces brillan en la oscuridad, iluminando un lejano cruce de caminos...
+
+"Izadlas bien," murmura la figura encapuchada a sus compañeros; uno de los guardias de la Casa Durance elegido por su practicidad inflexible. Pero incluso ella siente el escalofrío de una brisa fría y mira hacia arriba hacia los árboles oscuros con sospecha. Su equipo está colocando Witch Lanterns en los cruces de caminos y alrededor de cada asentamiento al que puedan llegar: postes altos con lámparas que arden con fragancias agradables.
+
+"¿Crees que esto las asustará?" susurra el joven compañero. "Era malo antes de que llegara Vesh, y ahora..."
+
+"¡Silencio! ¡No pronuncies el nombre de la Mano Oscura, esta noche de todas las noches!" Esta noche es la Noche de Todos los Santos, la noche en que los muertos regresan a la tierra... y este año, ha habido muchos muertos.
+
+"Termina el trabajo rápido y podemos volver a casa, Kerri," sisea el guardia, pero ella no responde. "¿Kerri?" El guardia de la Casa Durance está solo de algún modo en la noche, con la última Witch Lantern en el suelo, sin plantar.`,
+    setup:'Usa la Temporary Rules Card 003.',
+    objective:'Entrega 1 Lantern a cada uno de los siguientes lugares: Aranwyn Pools, Raven Feather Market, Hyzicki Caravans, Sterncastle Meadow y Lost Hope Inn. (4 ubicaciones para 2 jugadores, 5 para 3-4 jugadores).',
+    trackers:[{hope:'2',time:'Early Hours',morale:'2'},{hope:'2',time:'Late Morning',morale:'3'},{hope:'2',time:'Midday',morale:'3'}],
+    stats:{xp:5,csb:3,stats:3,equipment:6,skills:4},
+    board:[
+      {letter:'a',text:'5 Lanterns (cubos rojos) en The City of Kings — Hexágonos 1, 3, 10, 13, 15'},
+      {letter:'b',text:'Aranwyn Pools'},
+      {letter:'c',text:'Moat'},
+      {letter:'d',text:'Moat'},
+      {letter:'e',text:'Raven Feather Market'},
+      {letter:'f',text:'Hyzicki Caravans'},
+      {letter:'g',text:'Sterncastle Meadow'},
+      {letter:'h',text:'Lost Hope Inn'},
+    ],
+    tiles:'1, 3, 10, 13, 15',
+    start:{heroes:'The City of Kings',workers:'The City of Kings'},
+    rules:{title:'Temporary Rules Card 003',text:'Durante la preparación, se colocan ciertos Objetos (cubos rojos) en hexágonos del mapa. Pueden ser recogidos, movidos y entregados por tus Trabajadores.\n\nUn Trabajador en el mismo espacio que un Objeto puede usar una acción Work para recoger 1 Objeto. También puede usar Work para dejar caer 1 Objeto en su posición actual.'},
+  },
+];
+
+const TYPE_CSS={extended:'tag-extended',scenario:'tag-fight',seasonal:'tag-seasonal'};
+const TYPE_LABELS={extended:'Escenario Extendido',scenario:'Escenario',seasonal:'Escenario de Temporada'};
+
+let selectedMission=null;
+let isSpeaking=false;
+
+// ── RENDER GRID ──────────────────────────────────────────────
+function renderMissionGrid(){
+  const grid=document.getElementById('mission-grid');
+  grid.innerHTML='';
+
+  // Extended
+  const extLabel=document.createElement('div');extLabel.className='group-label';extLabel.textContent='♔ Escenario Extendido';
+  grid.appendChild(extLabel);
+  const extGrid=document.createElement('div');extGrid.className='mission-grid';
+  MISSIONS.filter(m=>m.group==='extended').forEach(m=>{extGrid.appendChild(makeCard(m));});
+  grid.appendChild(extGrid);
+
+  // Scenarios
+  const scLabel=document.createElement('div');scLabel.className='group-label';scLabel.textContent='⚔ Escenarios 1 – 10';
+  grid.appendChild(scLabel);
+  const scGrid=document.createElement('div');scGrid.className='mission-grid';
+  MISSIONS.filter(m=>m.group==='scenario').forEach(m=>{scGrid.appendChild(makeCard(m));});
+  grid.appendChild(scGrid);
+
+  // Seasonal
+  const seLabel=document.createElement('div');seLabel.className='group-label';seLabel.textContent='🍂 Escenarios de Temporada 1 – 4';
+  grid.appendChild(seLabel);
+  const seGrid=document.createElement('div');seGrid.className='mission-grid';
+  MISSIONS.filter(m=>m.group==='seasonal').forEach(m=>{seGrid.appendChild(makeCard(m));});
+  grid.appendChild(seGrid);
+}
+
+function makeCard(m){
+  const div=document.createElement('div');
+  div.className='mission-card'+(selectedMission?.id===m.id?' active':'');
+  const num=m.num!=null?`<div class="mc-num">${m.group==='seasonal'?'Temporada':'Escenario'} ${m.num}</div>`:'';
+  div.innerHTML=`${num}<span class="mc-tag ${TYPE_CSS[m.group]||''}">${TYPE_LABELS[m.group]}</span>
+    <div class="mc-title">${m.title}</div>
+    <div class="mc-difficulty" style="color:${m.difficultyColor}">${m.difficulty} · ${m.missionType}</div>`;
+  div.onclick=()=>selectMission(m);
+  return div;
+}
+
+// ── SELECT MISSION ───────────────────────────────────────────
+function selectMission(m){
+  stopSpeech();
+  selectedMission=m;
+  renderMissionGrid();
+  renderDetail(m);
+  setTimeout(()=>document.getElementById('mission-detail').scrollIntoView({behavior:'smooth',block:'start'}),80);
+}
+
+// ── RENDER DETAIL ────────────────────────────────────────────
+function renderDetail(m){
+  const el=document.getElementById('mission-detail');
+  const paragraphs=m.story.split('\n\n').filter(Boolean).map(p=>{
+    const t=p.trim();
+    return (t.startsWith('"')||t.includes('"'))?`<p class="dialogue">${t}</p>`:`<p>${t}</p>`;
+  }).join('');
+  const trackerRows=m.trackers.map(t=>`<tr><td>${t.hope}</td><td>${t.time}</td><td>${t.morale}</td></tr>`).join('');
+  const boardItems=m.board.map(b=>`<li><span class="li-letter">${b.letter}.</span> ${b.text}</li>`).join('');
+  const numLine=m.num!=null?`<div class="md-num">${m.group==='seasonal'?'Temporada':'Escenario'} ${m.num}</div>`:'';
+
+  el.innerHTML=`<div class="mission-detail">
+    <div class="md-header">
+      <span class="md-type-badge ${TYPE_CSS[m.group]||''}">${TYPE_LABELS[m.group]}</span>
+      ${numLine}
+      <div class="md-title">${m.title}</div>
+      <div class="md-diff" style="color:${m.difficultyColor};">⚔ ${m.difficulty} &nbsp;·&nbsp; ${m.missionType}</div>
+    </div>
+
+    <div class="audio-controls">
+      <button class="audio-btn" id="btn-read" onclick="toggleReading()">🗣 Leer en voz alta</button>
+      <button class="audio-btn" onclick="toggleMusicRow()">🎵 Música ambiental</button>
+      <button class="audio-btn" onclick="stopAll()">⏹ Detener todo</button>
+    </div>
+
+    <div class="music-row" id="music-player-row" style="display:none;">
+      <div style="display:flex;gap:8px;width:100%;flex-wrap:wrap;align-items:center;">
+        <input type="text" id="music-url-input" class="music-input" placeholder="Pega una URL de YouTube o enlace directo a mp3...">
+        <button class="music-btn" onclick="playMusicFromUrl()">▶ Reproducir</button>
+        <label class="music-btn" style="cursor:pointer;">
+          📁 Archivo mp3
+          <input type="file" id="music-file-input" accept="audio/*" style="display:none;" onchange="playMusicFromFile(event)">
+        </label>
+        <button class="music-btn" onclick="stopMusic()">⏹ Parar</button>
+      </div>
+      <audio id="music-audio" loop style="margin-top:8px;width:100%;display:none;"></audio>
+    </div>
+
+    <div class="story-section">
+      <div class="section-label">✦ Prólogo</div>
+      <div class="story-text" id="story-text">${paragraphs}</div>
+    </div>
+
+    <div class="ornament">⚜ ✦ ⚜</div>
+
+    ${m.setup?`<div class="objective-box" style="background:linear-gradient(135deg,rgba(26,46,90,.2),rgba(10,6,3,.4));border-color:rgba(79,195,247,.25);">
+      <div class="obj-label" style="color:#4FC3F7;">⚙ Preparación</div>
+      <div class="obj-text">${m.setup}</div>
+    </div>`:''}
+
+    <div class="objective-box">
+      <div class="obj-label">🎯 Objetivo</div>
+      <div class="obj-text">${m.objective}</div>
+    </div>
+
+    ${m.warning?`<div class="warning-box">⚠ ${m.warning}</div>`:''}
+
+    <div class="setup-section">
+      <div class="section-label">📋 Configuración</div>
+      <div class="setup-grid">
+        <div class="setup-block">
+          <div class="setup-block-title">🕐 Marcadores</div>
+          <table class="tracker-table">
+            <thead><tr><th>Esperanza</th><th>Tiempo</th><th>Moral</th></tr></thead>
+            <tbody>${trackerRows}</tbody>
+          </table>
+        </div>
+        <div class="setup-block">
+          <div class="setup-block-title">📊 Estadísticas iniciales</div>
+          <div class="stat-row"><span class="stat-label">XP</span><span class="stat-val">${m.stats.xp}</span></div>
+          <div class="stat-row"><span class="stat-label">Creature Stat Bar</span><span class="stat-val">${m.stats.csb}</span></div>
+          <div class="stat-row"><span class="stat-label">Stats</span><span class="stat-val">${m.stats.stats}</span></div>
+          <div class="stat-row"><span class="stat-label">Equipment</span><span class="stat-val">${m.stats.equipment}</span></div>
+          <div class="stat-row"><span class="stat-label">Skills</span><span class="stat-val">${m.stats.skills}</span></div>
+        </div>
+      </div>
+      <div class="setup-block" style="margin-top:10px;">
+        <div class="setup-block-title">🗺 Tiles: ${m.tiles}</div>
+        <ul class="board-list">${boardItems}</ul>
+        <div style="margin-top:8px;font-size:11px;color:var(--parch3);">
+          <span style="color:var(--gold);font-family:'Cinzel',serif;font-size:9px;">Heroes:</span> ${m.start.heroes} &nbsp;&nbsp;
+          <span style="color:var(--gold);font-family:'Cinzel',serif;font-size:9px;">Workers:</span> ${m.start.workers}
+        </div>
+      </div>
+    </div>
+
+    ${m.rules?`<div class="rules-card">
+      <div class="rules-label">📜 ${m.rules.title}</div>
+      <div class="rules-text">${m.rules.text.replace(/\n/g,'<br>')}</div>
+    </div>`:''}
+
+  </div>`;
+}
+
+// ── SPEECH ───────────────────────────────────────────────────
+function toggleReading(){
+  if(isSpeaking){stopSpeech();return;}
+  if(!selectedMission)return;
+  if(!('speechSynthesis' in window)){toast('Tu navegador no soporta lectura de voz');return;}
+  const text=selectedMission.story.replace(/["""]/g,'"');
+  const utt=new SpeechSynthesisUtterance(text);
+  utt.lang='es-ES';utt.rate=0.88;utt.pitch=1.0;
+  const voices=speechSynthesis.getVoices();
+  const v=voices.find(v=>v.lang.startsWith('es')&&v.localService)||voices.find(v=>v.lang.startsWith('es'));
+  if(v)utt.voice=v;
+  utt.onend=()=>{isSpeaking=false;document.getElementById('btn-read')?.classList.remove('reading');};
+  utt.onerror=()=>{isSpeaking=false;document.getElementById('btn-read')?.classList.remove('reading');};
+  speechSynthesis.speak(utt);isSpeaking=true;
+  document.getElementById('btn-read')?.classList.add('reading');
+  toast('Leyendo el prólogo...');
+}
+function stopSpeech(){if('speechSynthesis' in window)speechSynthesis.cancel();isSpeaking=false;document.getElementById('btn-read')?.classList.remove('reading');}
+
+// ── MUSIC ────────────────────────────────────────────────────
+function toggleMusicRow(){
+  const row=document.getElementById('music-player-row');
+  if(row)row.style.display=row.style.display==='none'?'':'none';
+}
+function playMusicFromUrl(){
+  const url=document.getElementById('music-url-input')?.value.trim();
+  if(!url){toast('Pega una URL primero');return;}
+  // Convert YouTube URL to embed if needed — just open audio element
+  const audio=document.getElementById('music-audio');
+  if(!audio)return;
+  audio.src=url;audio.style.display='block';
+  audio.play().catch(()=>{toast('No se pudo reproducir. Prueba con un archivo mp3 directo.');});
+  toast('🎵 Reproduciendo música...');
+}
+function playMusicFromFile(e){
+  const f=e.target.files[0];if(!f)return;
+  const audio=document.getElementById('music-audio');if(!audio)return;
+  audio.src=URL.createObjectURL(f);audio.style.display='block';
+  audio.play();toast('🎵 Reproduciendo: '+f.name);
+}
+function stopMusic(){
+  const audio=document.getElementById('music-audio');
+  if(audio){audio.pause();audio.src='';audio.style.display='none';}
+}
+function stopAll(){stopSpeech();stopMusic();toast('Todo detenido');}
+
+// ── TABS ─────────────────────────────────────────────────────
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');
+    const w=t.dataset.tab;
+    ['missions','heroes'].forEach(id=>document.getElementById('tab-'+id).style.display=id===w?'':'none');
+    if(w==='heroes') initHeroes();
+  };
+});
+
+// ── TOAST ────────────────────────────────────────────────────
+let toastT;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(toastT);toastT=setTimeout(()=>t.classList.remove('show'),2500);}
+
+// ── INIT ─────────────────────────────────────────────────────
+renderMissionGrid();
+if('speechSynthesis' in window)speechSynthesis.getVoices();
+
+// ── HEROES DATA ───────────────────────────────────────────────
+const HEROES = [
+  {
+    id:'brutius', name:'Brutius the Broken', nameEs:'Brutius el Roto',
+    skills:[
+      // Tier 1
+      {en:'CROWN OF RADIANCE',es:'Corona de Radiancia',type:'Special',tier:1,desc:'En cualquier momento: durante el ataque de una criatura, si estás en rango, te conviertes en el objetivo prioritario.'},
+      {en:'IGNORE',es:'Ignorar',type:'Interact',tier:1,desc:'Elimina 1 ficha de atención de 1 criatura en rango.'},
+      {en:'REMOVE CURSE',es:'Eliminar Maldición',type:'Heal',tier:1,desc:'Elimina 1 ficha de maldición de 1 héroe en rango (incluido tú mismo).'},
+      {en:'SKILL RESET',es:'Reinicio de Habilidad',type:'Special',tier:1,desc:'Roba 1 carta de habilidad y colócala aquí. Puedes volver a usar tus fichas de habilidad.'},
+      // Tier 2
+      {en:'BLUE-BLOODED',es:'Sangre Azul',type:'Special',tier:2,desc:'En cualquier momento: cuando un ataque básico te cause daño, puedes redirigir hasta 5 de ese daño a otra criatura en rango.'},
+      {en:'CALL OF KINGS',es:'Llamada de Reyes',type:'Passive',tier:2,desc:'Si otro héroe está en tu misma casilla, tu curación básica hace +2.'},
+      {en:'CHARGE',es:'Carga',type:'Attack + Move',tier:2,desc:'Muévete hasta una criatura en rango y realiza 1 ataque básico, apuntando a esa misma criatura.'},
+      {en:'DART',es:'Dardo',type:'Special',tier:2,desc:'Causa 1 de daño a 1 criatura en rango. Ignora escudos.'},
+      {en:'DEFEND THE REALM',es:'Defender el Reino',type:'Special',tier:2,desc:'En cualquier momento: cuando un ataque básico te cause daño, elige a un héroe para que realice 1 acción no usada.'},
+      // Tier 3
+      {en:'EQUERRY',es:'Caballerizo',type:'Passive',tier:3,desc:'Tu héroe ahora puede viajar a cualquier tile explorada desde una tile de establo.'},
+      {en:'GREAT AXE',es:'Gran Hacha',type:'Passive',tier:3,desc:'Tu ataque básico ignora 6 de escudo.'},
+      {en:'KING\'S BLESSING',es:'Bendición del Rey',type:'Special + Heal',tier:3,desc:'Realiza 1 curación especial; los héroes adyacentes a tu objetivo también reciben el 50% de la curación.'},
+      {en:'POSSESS',es:'Poseer',type:'Special',tier:3,desc:'Mueve a otro héroe; usa su stat de movimiento para esta acción.'},
+    ]
+  },
+  {
+    id:'calamis', name:'Calamis Earthshaker', nameEs:'Calamis el Sacudidor de Tierras',
+    skills:[
+      // Tier 1
+      {en:'CURE POISON',es:'Curar Veneno',type:'Heal',tier:1,desc:'Elimina todas las fichas de veneno de la Ficha de Personaje de 1 héroe en rango (incluido tú mismo).'},
+      {en:'INSTIL FEAR',es:'Infundir Miedo',type:'Special',tier:1,desc:'Coloca una ficha de ataque -1 en una criatura en rango. Estas fichas se acumulan.'},
+      {en:'LAST STAND',es:'Última Resistencia',type:'Special + Attack',tier:1,desc:'Un ataque especial que golpea a tu objetivo y a todas las criaturas adyacentes a él.'},
+      {en:'SKILL RESET',es:'Reinicio de Habilidad',type:'Special',tier:1,desc:'Roba 1 carta de habilidad y colócala aquí. Puedes volver a usar tus fichas de habilidad.'},
+      {en:'WARMING',es:'Calentar',type:'Interact',tier:1,desc:'Elimina hasta 2 fichas de escarcha de tiles en rango.'},
+      // Tier 2
+      {en:'EARTH PRISON',es:'Prisión de Tierra',type:'Passive',tier:2,desc:'Las criaturas en tu casilla actual no pueden moverse. Esto anula cualquier habilidad de movimiento de la criatura.'},
+      {en:'HAGGLE',es:'Regatear',type:'Interact',tier:2,desc:'Intercambia 2 recursos de cualquier tipo por 1 recurso de otro tipo.'},
+      {en:'RESTORE',es:'Restaurar',type:'Special',tier:2,desc:'Cura a un héroe en rango (incluido tú mismo) 3 puntos de vida.'},
+      {en:'SMASH',es:'Golpear',type:'Special',tier:2,desc:'Realiza 1 ataque básico.'},
+      // Tier 3
+      {en:'HAMMER FIST',es:'Puño Martillo',type:'Attack + Attack',tier:3,desc:'Realiza 1 ataque básico; el daño se duplica.'},
+      {en:'PANIC',es:'Pánico',type:'Special + Move',tier:3,desc:'Elige 1 criatura en rango, roba 1 carta de posición y mueve la criatura.'},
+      {en:'REVIVE',es:'Revivir',type:'Passive',tier:3,desc:'Al inicio de tu turno, si no estás en rango de ninguna criatura, puedes curar a un héroe en rango (incluido tú mismo) 5 puntos de vida.'},
+      {en:'STONESKIN',es:'Piel de Piedra',type:'Special + Transform',tier:3,desc:'Transformación: ya no puedes moverte. Mientras estés transformado, reduce el daño entrante de ataques básicos en 5.'},
+    ]
+  },
+  {
+    id:'sesharra', name:'Sesharra', nameEs:'Sesharra',
+    skills:[
+      // Tier 1
+      {en:'CURE POISON',es:'Curar Veneno',type:'Heal',tier:1,desc:'Elimina todas las fichas de veneno de la Ficha de Personaje de 1 héroe en rango (incluido tú mismo).'},
+      {en:'LANDSONG',es:'Canción de la Tierra',type:'Interact',tier:1,desc:'Elimina hasta 2 fichas de veneno de tiles en rango.'},
+      {en:'LEAP',es:'Saltar',type:'Move',tier:1,desc:'En cualquier momento: cuando un ataque básico te cause daño, puedes moverte a una tile adyacente.'},
+      {en:'NEEDLE CLAWS',es:'Garras de Aguja',type:'Passive',tier:1,desc:'Tu ataque básico ignora 1 de escudo.'},
+      {en:'SKILL RESET',es:'Reinicio de Habilidad',type:'Special',tier:1,desc:'Roba 1 carta de habilidad y colócala aquí. Puedes volver a usar tus fichas de habilidad.'},
+      // Tier 2
+      {en:'MARTYR\'S STEP',es:'Paso del Mártir',type:'Special + Move',tier:2,desc:'En cualquier momento: muévete a la tile de un héroe en rango que sea el objetivo de una criatura y conviértete en el objetivo.'},
+      {en:'POISON BOLT',es:'Rayo Venenoso',type:'Special',tier:2,desc:'Coloca 1 ficha de veneno débil en 1 tile en rango.'},
+      {en:'RENEW',es:'Renovar',type:'Special',tier:2,desc:'En cualquier momento: cura a un héroe en rango 5 puntos de vida.'},
+      {en:'STRATEGIST',es:'Estratega',type:'Interact',tier:2,desc:'Mira las 7 cartas superiores del mazo de objetos y vuélvelas a colocar en cualquier orden.'},
+      // Tier 3
+      {en:'DASH',es:'Correr',type:'Passive',tier:3,desc:'Ahora puedes moverte en diagonal.'},
+      {en:'DESERT CHANT',es:'Canto del Desierto',type:'Special + Transform',tier:3,desc:'Transformación: ya no puedes moverte. Mientras estés transformado, tu curación básica aumenta un +50%.'},
+      {en:'DODGE!',es:'¡Esquivar!',type:'Passive',tier:3,desc:'Cuando seas objetivo de un ataque básico, lanza 2 dados de suerte. Reduce el daño entrante por el valor más alto.'},
+      {en:'GRAVE BERRIES',es:'Bayas de Tumba',type:'Passive',tier:3,desc:'Tu ataque básico hace +50% de daño adicional a criaturas en una tile con una ficha de veneno.'},
+    ]
+  },
+  {
+    id:'thralir', name:'Thralir Hillfeet', nameEs:'Thralir Pie de Colina',
+    skills:[
+      // Tier 1
+      {en:'ICE BLAST',es:'Explosión de Hielo',type:'Interact',tier:1,desc:'Elimina hasta 2 fichas de fuego de tiles en rango.'},
+      {en:'PITFIGHTER',es:'Luchador de Foso',type:'Passive',tier:1,desc:'Cuando tu héroe esté en una tile de mina, tu ataque básico hace +3.'},
+      {en:'REMOVE CURSE',es:'Eliminar Maldición',type:'Heal',tier:1,desc:'Elimina 1 ficha de maldición de 1 héroe en rango (incluido tú mismo).'},
+      {en:'SKILL RESET',es:'Reinicio de Habilidad',type:'Special',tier:1,desc:'Roba 1 carta de habilidad y colócala aquí. Puedes volver a usar tus fichas de habilidad.'},
+      {en:'STONY CURSE',es:'Maldición Pétrea',type:'Special',tier:1,desc:'Coloca una ficha de ataque -1 en 1 criatura en rango. Estas fichas se acumulan.'},
+      // Tier 2
+      {en:'BERSERK',es:'Berserker',type:'Attack',tier:2,desc:'En cualquier momento: cuando un ataque básico te cause daño, puedes atacar a 1 criatura en rango.'},
+      {en:'FIRE BOLT',es:'Rayo de Fuego',type:'Special',tier:2,desc:'Coloca 1 ficha de fuego débil en 1 tile en rango.'},
+      {en:'GUILDMASTER',es:'Maestro de Gremio',type:'Special',tier:2,desc:'Roba 1 carta de objeto y añádela al Trade District.'},
+      {en:'SCROLL OF DEFIANCE',es:'Pergamino de Desafío',type:'Special',tier:2,desc:'Restaura 3 puntos de vida a todos los héroes en rango, incluido tú mismo.'},
+      // Tier 3
+      {en:'IRON HIDE',es:'Piel de Hierro',type:'Passive',tier:3,desc:'Cuando estés en rango de 2 o más criaturas, los ataques básicos entrantes se reducen en 10.'},
+      {en:'QUARTERMASTER',es:'Maestro de Cuartel',type:'Passive',tier:3,desc:'Gasta instantáneamente 5 stats en tus trabajadores. Puedes aumentar cualquier stat de trabajador en cualquier combinación.'},
+      {en:'RED HOT',es:'Al Rojo Vivo',type:'Passive',tier:3,desc:'Tu ataque básico hace +50% de daño adicional a criaturas en una tile con una ficha de fuego.'},
+      {en:'WAVE OF SANCTITY',es:'Ola de Santidad',type:'Special + Heal',tier:3,desc:'Cura a todos los personajes entre tú y tu objetivo, incluyéndote a ti y a tu objetivo.'},
+    ]
+  },
+  {
+    id:'tlorra', name:"T'Lorra the Blessed", nameEs:"T'Lorra la Bendita",
+    skills:[
+      // Tier 1
+      {en:'BONDED',es:'Vinculada',type:'Passive',tier:1,desc:'Siempre que interactúes para robar una carta de misión, puedes robar 1 carta de misión adicional.'},
+      {en:"DEFEND",es:'Defender',type:'Passive',tier:1,desc:'Los ataques básicos entrantes se reducen en 1.'},
+      {en:"EAGLE'S RALLY",es:'Reagrupamiento del Águila',type:'Passive',tier:1,desc:'Si otro héroe está en tu misma casilla, tu ataque básico gana +2.'},
+      {en:'REMOVE CURSE',es:'Eliminar Maldición',type:'Heal',tier:1,desc:'Elimina 1 ficha de maldición de 1 héroe en rango (incluido tú mismo).'},
+      {en:'SKILL RESET',es:'Reinicio de Habilidad',type:'Special',tier:1,desc:'Roba 1 carta de habilidad y colócala aquí. Puedes volver a usar tus fichas de habilidad.'},
+      // Tier 2
+      {en:'CURSE',es:'Maldición',type:'Special',tier:2,desc:'Coloca 1 ficha de maldición en 1 criatura en rango.'},
+      {en:'SEER',es:'Vidente',type:'Interact',tier:2,desc:'Puedes mirar una tile adyacente sin explorarla.'},
+      {en:'STIGMATA',es:'Estigmas',type:'Heal',tier:2,desc:'En cualquier momento: después de que un ataque básico te cause daño, puedes curar a un héroe en rango.'},
+      {en:'WISH',es:'Deseo',type:'Heal + Move',tier:2,desc:'Muévete hasta un héroe en rango y realiza 1 curación básica, apuntando al mismo héroe.'},
+      // Tier 3
+      {en:"EAGLE'S CALL",es:'Llamada del Águila',type:'Special + Move',tier:3,desc:'Muévete instantáneamente a la ubicación de otro héroe.'},
+      {en:'SOOTHING WORDS',es:'Palabras Tranquilizadoras',type:'Special',tier:3,desc:'Realiza 1 curación básica.'},
+      {en:'VENGEFUL PRAYER',es:'Plegaria Vengativa',type:'Special + Transform',tier:3,desc:'Transformación: ya no puedes moverte. Mientras estés transformado, tus ataques básicos hacen +50% de daño.'},
+      {en:'WARDSTONES',es:'Piedras de Guardia',type:'Special + Heal',tier:3,desc:'Coloca 3 fichas de wardstone débiles en 3 tiles diferentes en rango.'},
+    ]
+  },
+  {
+    id:'vyliria', name:'Vyliria Ellion', nameEs:'Vyliria Ellion',
+    skills:[
+      // Tier 1
+      {en:'CURE POISON',es:'Curar Veneno',type:'Heal',tier:1,desc:'Elimina todas las fichas de veneno de la Ficha de Personaje de 1 héroe en rango (incluido tú mismo).'},
+      {en:'DISTRACTION',es:'Distracción',type:'Interact',tier:1,desc:'Puedes mover a un trabajador atrapado en rango a una tile adyacente.'},
+      {en:'ELFSTEP',es:'Paso Élfico',type:'Move',tier:1,desc:'En cualquier momento: tu héroe puede usar 1 acción de movimiento.'},
+      {en:'SKILL RESET',es:'Reinicio de Habilidad',type:'Special',tier:1,desc:'Roba 1 carta de habilidad y colócala aquí. Puedes volver a usar tus fichas de habilidad.'},
+      {en:'WEAKEN',es:'Debilitar',type:'Special',tier:1,desc:'Coloca una ficha de escudo -1 en 1 criatura en rango. Estas fichas se acumulan.'},
+      // Tier 2
+      {en:'BOLT',es:'Rayo',type:'Special',tier:2,desc:'Causa 2 de daño a 1 criatura en rango. Ignora escudos.'},
+      {en:'FARSIGHT',es:'Vista Lejana',type:'Passive',tier:2,desc:'Ahora puedes explorar tiles adyacentes sin moverte a ellas.'},
+      {en:'PROTECT',es:'Proteger',type:'Passive',tier:2,desc:'Los ataques básicos entrantes se reducen en 2.'},
+      {en:'TREE BLESSING',es:'Bendición del Árbol',type:'Passive',tier:2,desc:'Cuando tu héroe esté en una tile de bosque, tu curación básica hace +3.'},
+      // Tier 3
+      {en:'BLESS',es:'Bendición',type:'Special',tier:3,desc:'Gana instantáneamente 3 puntos de stat para gastar en tu héroe. Puedes aumentar cualquier stat en cualquier combinación.'},
+      {en:'FRENZY',es:'Frenesí',type:'Special + Attack',tier:3,desc:'Realiza 2 ataques básicos, uno inmediatamente después del otro.'},
+      {en:'MOTHERSONG',es:'Canción Materna',type:'Special + Heal',tier:3,desc:'Realiza 2 curaciones básicas, una inmediatamente después de la otra.'},
+      {en:'STONE WARD',es:'Guardia de Piedra',type:'Special',tier:3,desc:'Coloca 1 ficha de wardstone en tu casilla actual.'},
+    ]
+  },
+];
+
+// ── HERO RENDER ───────────────────────────────────────────────
+const TYPE_CLASS = {
+  'Passive':'passive','Special':'special','Attack':'attack','Heal':'heal',
+  'Interact':'interact','Move':'move','Attack + Attack':'attack','Attack + Move':'attack',
+  'Special + Heal':'heal','Special + Move':'move','Special + Attack':'attack',
+  'Special + Transform':'special','Heal + Move':'heal',
+};
+
+let selectedHero = null;
+
+function renderHeroSelector(){
+  const sel = document.getElementById('hero-selector');
+  if(!sel) return;
+  sel.innerHTML = '';
+  HEROES.forEach(h => {
+    const btn = document.createElement('button');
+    btn.className = 'hero-btn' + (selectedHero?.id === h.id ? ' active' : '');
+    btn.textContent = h.nameEs;
+    btn.addEventListener('click', () => selectHero(h));
+    sel.appendChild(btn);
+  });
+}
+
+function selectHero(h){
+  selectedHero = h;
+  renderHeroSelector();
+  const el = document.getElementById('hero-detail');
+  if(!el) return;
+  // Sort by tier first, then alphabetically within each tier
+  const sorted = [...h.skills].sort((a,b) => a.tier !== b.tier ? a.tier - b.tier : a.en.localeCompare(b.en));
+  const tierClass = {1:'tier-1',2:'tier-2',3:'tier-3'};
+  const cards = sorted.map(s => {
+    const tc = TYPE_CLASS[s.type] || 'special';
+    return `<div class="skill-card">
+      <span class="tier-badge ${tierClass[s.tier]||'tier-1'}">Tier ${s.tier}</span>
+      <div class="skill-name">${s.en} <span style="color:var(--parch3);font-weight:400;">(${s.es})</span></div>
+      <div class="skill-type ${tc}">${s.type}</div>
+      <div class="skill-desc">${s.desc}</div>
+    </div>`;
+  }).join('');
+  el.innerHTML = `
+    <div class="hero-title">${h.name}</div>
+    <div class="hero-subtitle">${h.nameEs}</div>
+    <div class="skills-grid">${cards}</div>`;
+}
+
+function initHeroes(){
+  renderHeroSelector();
+  selectHero(HEROES[0]);
+}
+
+// ── SERVICE WORKER ────────────────────────────────────────────
+if('serviceWorker' in navigator){
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
