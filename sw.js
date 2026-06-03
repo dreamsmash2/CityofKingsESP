@@ -1,8 +1,7 @@
-const CACHE = 'citykings-v4';
+const CACHE = 'citykings-v5';
 const ASSETS = [
-  './citykings_v4.html',
-  './manifest.json',
-  'https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Cinzel+Decorative:wght@400;700&family=IM+Fell+English:ital@0;1&display=swap'
+  './index.html',
+  './manifest.json'
 ];
 
 self.addEventListener('install', e => {
@@ -23,7 +22,7 @@ self.addEventListener('fetch', e => {
   e.respondWith(
     caches.match(e.request).then(cached => {
       const net = fetch(e.request).then(res => {
-        if(res.ok){
+        if(res.ok && res.type !== 'opaque'){
           const clone = res.clone();
           caches.open(CACHE).then(c => c.put(e.request, clone));
         }
